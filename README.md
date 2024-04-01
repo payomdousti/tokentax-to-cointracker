@@ -39,9 +39,9 @@ These transaction types are recognized by CoinTracker but are not supported by t
 Please review the generated output.csv file for any unexpected transaction types or missing data. If you encounter any issues or have transactions that are not supported by the script, you may need to manually adjust the data or import those transactions separately into CoinTracker.
 
 ### Requirements
-Python 3.x
-csv module (built-in)
-datetime module (built-in)
+- Python 3.x
+- csv module (built-in)
+- datetime module (built-in)
 
 ### License
 This script is released under the MIT License.
