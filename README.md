@@ -35,6 +35,7 @@ Cointracker CSV Import guidelines currently do not handle the following transact
 - Lost
 - Borrow
 - Repay
+
 These transaction types are recognized by CoinTracker but are not supported by their CSV import feature. If you encounter any of these transaction types in your TokenTax data, the script will print out the unexpected transaction type and the corresponding row for manual handling.
 
 ### Note
