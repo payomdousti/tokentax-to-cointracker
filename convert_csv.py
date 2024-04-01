@@ -13,9 +13,31 @@ def convert_to_cointracker_format(input_file, output_file):
 
         for row in data:
             transaction_type = row['Type']
-            if transaction_type == 'Trade':
+            if transaction_type == 'Withdrawal':
                 csv_writer.writerow({
-                    'Date': datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %H:%M:%S'),
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': '',
+                    'Received Currency': '',
+                    'Sent Quantity': row['SellAmount'],
+                    'Sent Currency': row['SellCurrency'],
+                    'Fee Amount': row.get('FeeAmount', ''),
+                    'Fee Currency': row.get('FeeCurrency', ''),
+                    'Tag': ''
+                })
+            elif transaction_type == 'Deposit':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': row['BuyAmount'],
+                    'Received Currency': row['BuyCurrency'],
+                    'Sent Quantity': '',
+                    'Sent Currency': '',
+                    'Fee Amount': '',
+                    'Fee Currency': '',
+                    'Tag': ''
+                })
+            elif transaction_type in ['Trade', 'Spend']:
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
                     'Received Quantity': row['BuyAmount'],
                     'Received Currency': row['BuyCurrency'],
                     'Sent Quantity': row['SellAmount'],
@@ -24,39 +46,26 @@ def convert_to_cointracker_format(input_file, output_file):
                     'Fee Currency': row['FeeCurrency'],
                     'Tag': ''
                 })
-            elif transaction_type == 'Deposit':
+            elif transaction_type in ['Income', 'Mining', 'Airdrop', 'Staking', 'Reward']:
                 csv_writer.writerow({
-                    'Date': datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %H:%M:%S'),
+                    'Date': format_date(row['Date']),
                     'Received Quantity': row['BuyAmount'],
                     'Received Currency': row['BuyCurrency'],
                     'Sent Quantity': '',
                     'Sent Currency': '',
                     'Fee Amount': '',
                     'Fee Currency': '',
-                    'Tag': ''
+                    'Tag': transaction_type.lower()
                 })
-            elif transaction_type == 'Withdrawal':
-                csv_writer.writerow({
-                    'Date': datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %H:%M:%S'),
-                    'Received Quantity': '',
-                    'Received Currency': '',
-                    'Sent Quantity': row['SellAmount'],
-                    'Sent Currency': row['SellCurrency'],
-                    'Fee Amount': '',
-                    'Fee Currency': '',
-                    'Tag': ''
-                })
-            elif transaction_type in ['Income', 'Staking']:
-                csv_writer.writerow({
-                    'Date': datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %H:%M:%S'),
-                    'Received Quantity': row['BuyAmount'],
-                    'Received Currency': row['BuyCurrency'],
-                    'Sent Quantity': '',
-                    'Sent Currency': '',
-                    'Fee Amount': '',
-                    'Fee Currency': '',
-                    'Tag': 'staking' if transaction_type == 'Staking' else ''
-                })
+             # elif transaction_type in ['Migration', 'Lost', 'Borrow', 'Repay'] : i have no idea what to do in these cases...
+             # it looks like maybe cointracker has borrow, repay, migration, lost types but csv import doesn't support them.
+            else:
+                print(f"Unexpected transaction type: {transaction_type}")
+                print(f"Row: {row}")
+                print()
+
+def format_date(date_string):
+    return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %H:%M:%S')
 
 # Usage example
 input_file = 'input.csv'
