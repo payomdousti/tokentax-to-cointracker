@@ -35,7 +35,7 @@ def convert_to_cointracker_format(input_file, output_file):
                     'Fee Currency': '',
                     'Tag': ''
                 })
-            elif transaction_type in ['Trade', 'Spend']:
+            elif transaction_type == 'Trade':
                 csv_writer.writerow({
                     'Date': format_date(row['Date']),
                     'Received Quantity': row['BuyAmount'],
@@ -46,7 +46,18 @@ def convert_to_cointracker_format(input_file, output_file):
                     'Fee Currency': row['FeeCurrency'],
                     'Tag': ''
                 })
-            elif transaction_type in ['Income', 'Mining', 'Airdrop', 'Staking', 'Reward']:
+            elif transaction_type == 'Spend':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': row['BuyAmount'],
+                    'Received Currency': row['BuyCurrency'],
+                    'Sent Quantity': row['SellAmount'],
+                    'Sent Currency': row['SellCurrency'],
+                    'Fee Amount': row['FeeAmount'],
+                    'Fee Currency': row['FeeCurrency'],
+                    'Tag': 'Lost'
+                })                
+            elif transaction_type == 'Income':
                 csv_writer.writerow({
                     'Date': format_date(row['Date']),
                     'Received Quantity': row['BuyAmount'],
@@ -55,10 +66,63 @@ def convert_to_cointracker_format(input_file, output_file):
                     'Sent Currency': '',
                     'Fee Amount': '',
                     'Fee Currency': '',
-                    'Tag': transaction_type.lower()
+                    'Tag': 'Other Income'
                 })
-             # elif transaction_type in ['Migration', 'Lost', 'Borrow', 'Repay'] : i have no idea what to do in these cases...
-             # it looks like maybe cointracker has borrow, repay, migration, lost types but csv import doesn't support them.
+            elif transaction_type == 'Staking':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': row['BuyAmount'],
+                    'Received Currency': row['BuyCurrency'],
+                    'Sent Quantity': '',
+                    'Sent Currency': '',
+                    'Fee Amount': '',
+                    'Fee Currency': '',
+                    'Tag': 'Staking reward'
+                })
+            elif transaction_type == 'Lost':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': '',
+                    'Received Currency': '',
+                    'Sent Quantity': row['SellAmount'],
+                    'Sent Currency': row['SellCurrency'],
+                    'Fee Amount': '',
+                    'Fee Currency': '',
+                    'Tag': 'Lost'
+                })
+            elif transaction_type == 'Borrow':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': row['BuyAmount'],
+                    'Received Currency': row['BuyCurrency'],
+                    'Sent Quantity': '',
+                    'Sent Currency': '',
+                    'Fee Amount': row['FeeAmount'],
+                    'Fee Currency': row['FeeCurrency'],
+                    'Tag': 'Borrow'
+                })
+            elif transaction_type == 'Repay':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': '',
+                    'Received Currency': '',
+                    'Sent Quantity': row['SellAmount'],
+                    'Sent Currency': row['SellCurrency'],
+                    'Fee Amount': row['FeeAmount'],
+                    'Fee Currency': row['FeeCurrency'],
+                    'Tag': 'Loan repayment'
+                })
+            elif transaction_type == 'Migration':
+                csv_writer.writerow({
+                    'Date': format_date(row['Date']),
+                    'Received Quantity': row['BuyAmount'],
+                    'Received Currency': row['BuyCurrency'],
+                    'Sent Quantity': row['SellAmount'],
+                    'Sent Currency': row['SellCurrency'],
+                    'Fee Amount': row['FeeAmount'],
+                    'Fee Currency': row['FeeCurrency'],
+                    'Tag': 'Bridge'
+                })
             else:
                 print(f"Unexpected transaction type: {transaction_type}")
                 print(f"Row: {row}")
