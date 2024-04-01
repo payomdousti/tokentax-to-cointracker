@@ -23,18 +23,15 @@ The script supports the following transaction types:
 - Trade
 - Spend
 - Income
-- Mining
-- Airdrop
 - Staking
-- Reward
+- Bridge
+- Lost
+- Borrow
 
 ## Missing Transaction Type Support From Cointracker CSV Import
 Cointracker CSV Import guidelines currently do not handle the following transaction types:
 
-- Bridge
-- Lost
-- Borrow
-- Repay
+- Loan repayment
 
 These transaction types are recognized by CoinTracker but are not supported by their CSV import feature. If you encounter any of these transaction types in your TokenTax data, the script will print out the unexpected transaction type and the corresponding row for manual handling.
 
